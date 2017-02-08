@@ -129,7 +129,6 @@ void FecoView::fecoParser(QFile *_inFile)
         if (nextLine.contains("Frequency in Hz:"))
         {
             int newFreq = nextLine.section("=", 1).toDouble() / 1000000;
-            qDebug() << newFreq;
 
             if (actualFreq != newFreq)
             {
@@ -180,6 +179,10 @@ void FecoView::fecoParser(QFile *_inFile)
         }
     }
 
+    if (!scatteringValues.isEmpty()) {
+        saveToFile(actualFreq, &scatteringValues); // записать значения для последней частоты
+    }
+
     _inFile->close();
 }
 
@@ -203,11 +206,23 @@ void FecoView::saveToFile(double frequency,
                              .arg(fileMask + readed));
     }
 
-    // заголовок таблицы
+    // запись заголовка таблицы
     outFile.write("0\t");
     outFile.write(thettas);
 
-    // значения ЭПР
+    // Если ЭПР рассчитан не на 360 а только до 180
+    if (newData->last()->azimuth == 180)
+    {
+        for (int i = newData->count() - 1 - 1; i >= 0; i--) //цикл с предпоследнего до первого элемента
+        {
+            FileLine *fileLine = new FileLine;
+            fileLine->azimuth = 360 - newData->at(i)->azimuth;
+            fileLine->values = newData->at(i)->values;
+            newData->append(fileLine);
+        }
+    }
+
+    // запись значений ЭПР
     char newLine {10};
     outFile.write((char*)&newLine, sizeof(char));
     for (FileLine *fileLine : *newData)
@@ -219,6 +234,7 @@ void FecoView::saveToFile(double frequency,
         outFile.write(ba);
         outFile.write((char*)&newLine, sizeof(char));
     }
+
     outFile.write("\n");
     newData->clear();
 }

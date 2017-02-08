@@ -5,6 +5,12 @@
 #include <QFile>
 #include <QDir>
 
+struct FileLine {
+    int azimuth;
+    QString values;
+};
+
+
 namespace Ui {
 class FecoView;
 }
@@ -19,8 +25,12 @@ public:
 
 private:
     Ui::FecoView *ui {NULL};
-    void    fecoParser              (QFile      *_inFile,
-                                     QString    _outFileMask);
+    QByteArray  thettas;
+    bool        thettasReady    {false};
+
+    void    fecoParser              (QFile      *_inFile);
+    void    saveToFile              (const double frequency,
+                                     QList <FileLine*> *newData);
 
 private slots:
     void    getInputFileNameSlot    ();

@@ -156,8 +156,7 @@ void FecoView::fecoParser(QFile *_inFile)
             QString scattering  = nextLine.section(" ", 6, 6, QString::SectionSkipEmpty);
 
             // Если это новое значение азимута то перейти на новую строку
-            if (actualPhi != phi.toFloat())
-            {
+            if (actualPhi != phi.toFloat()) {
                 if (!thettas.isNull()) {
                     thettasReady = true;
                 }
@@ -229,7 +228,6 @@ void FecoView::saveToFile(double frequency,
     {
         QByteArray ba;
         ba.append(QString::number(fileLine->azimuth));
-        ba.append("\t");
         ba.append(fileLine->values);
         outFile.write(ba);
         outFile.write((char*)&newLine, sizeof(char));

@@ -173,7 +173,7 @@ void FecoView::fecoParser(QFile *_inFile)
             }
 
             if (!thettasReady) { //дописать новое значение угла места, если массив еще не заполнен
-                thettas.append(nextLine.section(" ", 0, 0, QString::SectionSkipEmpty) + "\t");
+                thettas.append("\t" + nextLine.section(" ", 0, 0, QString::SectionSkipEmpty));
             }
         }
     }
@@ -206,7 +206,7 @@ void FecoView::saveToFile(double frequency,
     }
 
     // запись заголовка таблицы
-    outFile.write("0\t");
+    outFile.write("0");
     outFile.write(thettas);
 
     // Если ЭПР рассчитан не на 360 а только до 180
